@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Simulador de Compasso</title>
+  <style>
+    body {
+      text-align: center;
+      font-family: sans-serif;
+    }
+
+    #compassoArea {
+      border: 2px solid #333;
+      margin-top: 20px;
+      cursor: crosshair;
+    }
+
+    .info {
+      margin-top: 10px;
+    }
+  </style>
+</head>
+<body>
+  <h1>🧭 Simulador de Compasso</h1>
+  <p>1️⃣ Clique uma vez para marcar o centro<br>2️⃣ Clique outra vez para marcar o raio</p>
+
+  <svg id="compassoArea" width="500" height="500"></svg>
+
+  <div class="info" id="info"></div>
+
+  <script>
+    const svg = document.getElementById('compassoArea');
+    let centro = null;
+    let raio = null;
+
+    svg.addEventListener('click', function (e) {
+      const rect = svg.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
+
+      if (!centro) {
+        centro = { x, y };
+        desenharPonto(x, y, 'red');
+        document.getElementById('info').innerText = 'Centro definido! Agora clique para marcar o raio.';
+      } else {
+        raio = { x, y };
+        desenharPonto(x, y, 'blue');
+        desenharCircunferencia(centro, raio);
+        document.getElementById('info').innerText = 'Circunferência desenhada! Clique para reiniciar.';
+        centro = null;
+        raio = null;
+      }
+    });
+
+    function desenharPonto(x, y, cor) {
+      const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+      circle.setAttribute('cx', x);
+      circle.setAttribute('cy', y);
+      circle.setAttribute('r', 4);
+      circle.setAttribute('fill', cor);
+      svg.appendChild(circle);
+    }
+
+    function desenharCircunferencia(c, r) {
+      const dx = r.x - c.x;
+      const dy = r.y - c.y;
+      const raio = Math.sqrt(dx * dx + dy * dy);
+
+      const circ = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+      circ.setAttribute('cx', c.x);
+      circ.setAttribute('cy', c.y);
+      circ.setAttribute('r', raio);
+      circ.setAttribute('stroke', 'black');
+      circ.setAttribute('stroke-width', 2);
+      circ.setAttribute('fill', 'none');
+      svg.appendChild(circ);
+    }
+  </script>
+</body>
+</html>
